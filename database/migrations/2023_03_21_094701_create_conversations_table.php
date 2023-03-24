@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('conversations', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->integer('user_id')->unsigned();
-            $table->text("system_1")->nullable();
-            $table->text("system_2")->nullable();
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('conversations')){
+            Schema::create('conversations', function (Blueprint $table) {
+                $table->id();
+                $table->string('name');
+                $table->integer('user_id')->unsigned();
+                $table->text("system_1")->nullable();
+                $table->text("system_2")->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**
