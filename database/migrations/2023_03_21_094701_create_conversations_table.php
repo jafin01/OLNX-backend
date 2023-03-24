@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->integer('user_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('users');
             $table->text("system_1")->nullable();
             $table->text("system_2")->nullable();
             $table->timestamps();

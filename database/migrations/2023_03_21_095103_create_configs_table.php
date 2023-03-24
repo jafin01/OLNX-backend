@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('configs', function (Blueprint $table) {
             $table->id();
             $table->integer('conversation_id')->unsigned();
-            $table->foreign('conversation_id')->references('id')->on('conversations');
             $table->string("model_1");
             $table->string("model_2");
             $table->integer("temperature_1");

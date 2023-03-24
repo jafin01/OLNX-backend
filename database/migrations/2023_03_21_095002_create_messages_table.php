@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->text('message');
             $table->integer('conversation_id')->unsigned();
-            $table->foreign('conversation_id')->references('id')->on('conversations');
             $table->string("sender")->default("system 1");
             $table->timestamps();
         });
