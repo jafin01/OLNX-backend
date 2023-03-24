@@ -23,6 +23,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/user/tokens', function (Request $request) {
         return $request->user()->tokens;
     });
+    Route::get('/billing/intent', function (Request $request) {
+        $data['user'] = $request->user();
+        $data['intent'] = $request->user()->createSetupIntent();
+        return $data;
+    });
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
