@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BillingController;
 use App\Http\Controllers\ConversationController;
 
 use Illuminate\Http\Request;
@@ -18,18 +19,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(['middleware' => ['auth:sanctum']], function () {
+Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('/user', function (Request $request) {
-        return $request->user();
+        $data['user'] = $request->user();
+        $data['subscribed'] = $request->user()->subscribed('default');
+        return $data;
     });
     Route::get('/user/tokens', function (Request $request) {
         return $request->user()->tokens;
     });
-    Route::get('/billing/intent', function (Request $request) {
-        $data['user'] = $request->user();
-        $data['intent'] = $request->user()->createSetupIntent();
-        return $data;
-    });
+    Route::get('/billing/intent', [BillingController::class, 'intent']);
+
+    Route::post('/billing', [BillingController::class, 'save']);
+
     Route::get('/billing/url', function (Request $request) {
         // $paymentMethod['payment_method'] = "card";
         $data['user'] = $request->user();
