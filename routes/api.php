@@ -41,6 +41,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::post('/conversation', [ConversationController::class, 'save']);
 
+    Route::post('/conversation/update', [ConversationController::class, 'update']);
+
     Route::post('/ai/chat', [ConversationController::class, 'chat']);
 
     Route::get('/conversation', [ConversationController::class, 'index']);
