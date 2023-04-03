@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -30,6 +31,8 @@ class AuthController extends Controller
             'token' => $token
         ];
 
+        event(new Registered($user));
+
         return response($response, 201);
     }
 
@@ -49,6 +52,7 @@ class AuthController extends Controller
             ], 401);
         }
 
+        $user->tokens()->delete();
         $token = $user->createToken('olnx_token')->plainTextToken;
 
         $response = [

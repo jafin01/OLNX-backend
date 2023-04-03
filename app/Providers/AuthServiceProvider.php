@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Notifications\Messages\MailMessage;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -21,6 +23,18 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        VerifyEmail::toMailUsing(function (object $notifiable, string $url) {
+            $path = parse_url($url, PHP_URL_PATH);
+            $query = parse_url($url, PHP_URL_QUERY);
+
+            // remove the unwanted segments from the path
+            $path = preg_replace('/^\/api\/email\/verify\//', '', $path);
+
+            $newUrl = env("FRONTEND_URL", "https://olnx.com") . "/verify" . '/' . $path . '?' . $query;
+            return (new MailMessage)
+                ->subject('👋 Welcome to OLNX: Verify Email Address')
+                ->line('Click the button below to verify your email address.')
+                ->action('Verify Email Address', $newUrl);
+        });
     }
 }
