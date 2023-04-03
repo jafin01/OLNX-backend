@@ -27,7 +27,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified', 'admin']], function()
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     $request->fulfill();
  
-    return redirect('http://localhost:3000/playgrounds');
+    return ['message' => 'Email verified!'];
 })->middleware(['auth:sanctum', 'signed'])->name('verification.verify');
 
 Route::post('/email/resend', function (Request $request) {
