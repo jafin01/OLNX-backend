@@ -19,6 +19,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::group(['middleware' => ['auth:sanctum', 'verified', 'admin']], function() {
+    Route::get('/admin', [AdminController::class, 'admin']);
+});
+
 Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('/user', function (Request $request) {
         $data['user'] = $request->user();
@@ -53,8 +57,6 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('/conversation/{id}', [ConversationController::class, 'show']);
 
     Route::post('/logout', [AuthController::class, 'logout']);
-
-    Route::get('/admin', [AdminController::class, 'admin']);
 });
 
 Route::post('/register', [AuthController::class, 'register']);
