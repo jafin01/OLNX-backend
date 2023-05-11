@@ -13,11 +13,15 @@ return new class extends Migration
     {
         if(!Schema::hasTable('conversations')){
             Schema::create('conversations', function (Blueprint $table) {
-                $table->id();
+                $table->id()->unsigned();
                 $table->string('name');
-                $table->integer('user_id')->unsigned();
-                $table->text("system_1")->nullable();
-                $table->text("system_2")->nullable();
+                // $table->integer('user_id')->unsigned();
+                $table->unsignedBigINteger('user_id');
+                $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+                // $table->text("system_1")->nullable();
+                // $table->text("system_2")->nullable();
+                // $table->timestamp('created_at')->now();
+                // $table->timestamp('updated_at')->now();
                 $table->timestamps();
             });
         }

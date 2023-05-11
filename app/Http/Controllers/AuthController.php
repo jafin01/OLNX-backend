@@ -24,16 +24,16 @@ class AuthController extends Controller
             'password' => bcrypt($fields['password'])
         ]);
 
-        $token = $user->createToken('olnx_token')->plainTextToken;
+        // $token = $user->createToken('olnx_token')->plainTextToken;
 
-        $response = [
-            'user' => $user,
-            'token' => $token
-        ];
+        // $response = [
+        //     'user' => $user,
+        //     'token' => $token
+        // ];
 
-        event(new Registered($user));
+        //event(new Registered($user));
 
-        return response($response, 201);
+        return response($user, 201);
     }
 
     public function login(Request $request) {
@@ -52,6 +52,8 @@ class AuthController extends Controller
             ], 401);
         }
 
+        
+
         $user->tokens()->delete();
         $token = $user->createToken('olnx_token')->plainTextToken;
 
@@ -59,6 +61,27 @@ class AuthController extends Controller
             'user' => $user,
             'token' => $token
         ];
+
+        // $tokensss = $request->bearerToken();
+
+        // return $tokensss;
+
+        // auth()->setUser($user);
+
+        //log the user in
+        // Auth::login($user);
+
+        // $credentials = $request->only('email', 'password');
+
+        // if (Auth::attempt($credentials)) {
+        //     // Authentication was successful...
+        //     return redirect()->intended('dashboard');
+        // } else {
+        //     // Authentication failed...
+        //     return redirect()->back()->withErrors([
+        //         'email' => 'The provided credentials do not match our records.',
+        //     ]);
+        // }
 
         return response($response, 201);
     }
