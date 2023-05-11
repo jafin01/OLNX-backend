@@ -10,114 +10,200 @@ use Illuminate\Http\Request;
 class ConversationController extends Controller
 {
     public function save(Request $request) {
-
-        // return $request->all();
-        
+        error_log('now call 2 times');
         $conversation = new Conversation();
         // get name from OpenAI for this conversation here
         if ($request->name) {
             $conversation->name = $request->name;
         } else {
+            $conversation->name = 'test conversation';
+            // return 'no name';
             // put the generated name here
         }
-        $conversation->user_id = auth()->user()->id;
-        $conversation->system_1 = $request->config1['system'];
-        $conversation->system_2 = $request->config2['system'];
+
+    $conversation->user_id = auth()->user()->id;
         if ($request->template) {
             $conversation->template = true;
+        } else {
+            $conversation->template = false;
         }
-        $conversation->save();
+        try {
+            // return $conversation;
+            $conversation->save();   
+        } catch(\Exception $e) {
+            return [
+                "error"=> "Helloo"
+            ];
+        }
+/////////////////////////// 10 may 2023
+        try {
+            foreach ($request->messages as $message) {
+                $msg = new Message();
+                $msg->user_id = auth()->user()->id;
+                $msg->conversation_id = $conversation->id;
+                $msg->message = $message['message'];
+                $msg->sender = $message['role'];
 
-        // loop through all request messages
-        foreach ($request->messages as $message) {
-            $msg = new Message();
-            $msg->conversation_id = $conversation['id'];
-            $msg->message = $message['message'];
-            $msg->sender = $message['role'];
-            $msg->save();
+                $msg->save();
+            }
+        } catch(\Exception $e) {
+            error_log($e->getMessage());
+            return [
+                "error" => "An error occurred while saving the message."
+            ];
         }
 
-        // a function that saves all configs
-        $config = new Config();
-        $config->conversation_id = $conversation->id;
-        $config->model_1 = $request->config1['model'];
-        $config->model_2 = $request->config2['model'];
-        $config->temperature_1 = $request->config1['temperature'];
-        $config->temperature_2 = $request->config2['temperature'];
-        $config->top_p_1 = $request->config1['top_p'];
-        $config->top_p_2 = $request->config2['top_p'];
-        $config->frequency_penalty_1 = $request->config1['frequency_penalty'];
-        $config->frequency_penalty_2 = $request->config2['frequency_penalty'];
-        $config->presence_penalty_1 = $request->config1['presence_penalty'];
-        $config->presence_penalty_2 = $request->config2['presence_penalty'];
-        $config->max_length_1 = $request->config1['maxLength'];
-        $config->max_length_2 = $request->config2['maxLength'];
-        $config->save();
+        
+        //configs
+        
+        try{
+            $configs = $request->configs;
+            // error_log($configs[0]);
+            
+            // return [
+            //     "configs" => $configs[0]["system"]
+            // ];
+            foreach ($configs as $index => $config) {
+                $configuration = new Config();
+                $configuration->conversation_id = $conversation->id;
+                $configuration->user_id = auth()->user()->id;
+                $configuration->system = $config["system"];
+                $configuration->model = $config['model'];
+                $configuration->top_p = $config['top_p'];
+                $configuration->temperature = $config['temperature'];
+                $configuration->max_length = $config['maxLength'];
+                $configuration->frequency_penalty = $config['frequency_penalty'];
+                $configuration->presence_penalty = $config['presence_penalty'];
+
+                $configuration->save();
+            
+                // $this->saveMessages($request->messages[$index], $conversation, $configuration);
+            }
+
+        } catch(\Exception $e) {
+            error_log($e->getMessage());
+            return [
+                "error" => "An error occurred while saving the message."
+            ];
+        }
+    
 
         return $conversation;
     }
 
     public function update(Request $request) {
 
-        // return $request->all();
-        
+       try { 
         $conversation = Conversation::find($request->id);
-        // get name from OpenAI for this conversation here
+
+        $conversationId = $request->id;
+        error_log('Conversation ID: ' . $conversationId);
+
+
+        if (!$conversation) {
+            // Conversation not found
+            //$conversationId = 59;
+            return response()->json([
+                'error' => 'Conversation not found.'
+            ], 410);
+        }
+
+        return $request;
         if ($request->name) {
             $conversation->name = $request->name;
         } else {
-            // put the generated name here
+            // Generate and set the conversation name here
+            $conversation->name = "test updated";
+            error_log("generated a new name");
         }
+
+        
+        // Update conversation name
+        
+        
+
         $conversation->user_id = auth()->user()->id;
-        $conversation->system_1 = $request->config1['system'];
-        $conversation->system_2 = $request->config2['system'];
+
         if ($request->template) {
             $conversation->template = true;
-        }
-        $conversation->save();
-
-        // loop through all request messages
-        $msgs = Message::where('conversation_id', $request->id)->get();
-        foreach ($msgs as $msg) {
-            $msg->delete();
-        }
-        foreach ($request->messages as $message) {
-            $msg = new Message();
-            $msg->conversation_id = $conversation['id'];
-            $msg->message = $message['message'];
-            $msg->sender = $message['role'];
-            $msg->save();
+        } else {
+            $conversation->template = false;
         }
 
-        // a function that saves all configs
-        $config = Config::where('conversation_id', $request->id)->first();
-        $config->conversation_id = $conversation->id;
-        $config->model_1 = $request->config1['model'];
-        $config->model_2 = $request->config2['model'];
-        $config->temperature_1 = $request->config1['temperature'];
-        $config->temperature_2 = $request->config2['temperature'];
-        $config->top_p_1 = $request->config1['top_p'];
-        $config->top_p_2 = $request->config2['top_p'];
-        $config->frequency_penalty_1 = $request->config1['frequency_penalty'];
-        $config->frequency_penalty_2 = $request->config2['frequency_penalty'];
-        $config->presence_penalty_1 = $request->config1['presence_penalty'];
-        $config->presence_penalty_2 = $request->config2['presence_penalty'];
-        $config->max_length_1 = $request->config1['maxLength'];
-        $config->max_length_2 = $request->config2['maxLength'];
-        $config->save();
+        try {
+            $conversation->save();   
+        } catch(\Exception $e) {
+            return [
+            "error"=> "An error occurred while saving the conversation."
+            ];
+        }
+
+        try {
+            // Delete existing messages
+            Message::where('conversation_id', $conversation->id)->delete();
+
+            // Save updated messages
+            foreach ($request->messages as $message) {
+                $msg = new Message();
+                $msg->user_id = auth()->user()->id;
+                $msg->conversation_id = $conversation->id;
+                $msg->message = $message['message'];
+                $msg->sender = $message['role'];
+                $msg->save();
+            }
+        } catch(\Exception $e) {
+            return [
+                "error" => "An error occurred while saving the messages."
+            ];
+        }
+
+        try {
+            // Delete existing configurations
+            Config::where('conversation_id', $conversation->id)->delete();
+
+            // Save updated configurations
+            foreach ($request->configs as $config) {
+                $configuration = new Config();
+                $configuration->conversation_id = $conversation->id;
+                $configuration->user_id = auth()->user()->id;
+                $configuration->system = $config["system"];
+                $configuration->model = $config['model'];
+                $configuration->top_p = $config['top_p'];
+                $configuration->temperature = $config['temperature'];
+                $configuration->max_length = $config['maxLength'];
+                $configuration->frequency_penalty = $config['frequency_penalty'];
+                $configuration->presence_penalty = $config['presence_penalty'];
+                $configuration->save();
+            }
+        } catch(\Exception $e) {
+            return [
+                "error" => "An error occurred while saving the configurations."
+            ];
+        }
 
         return $conversation;
+    } catch (\Exception $e) {
+        // Log the error for debugging
+        error_log($e->getMessage());
+        
+        // Return an error response
+        return response()->json([
+            'error' => 'An internal server error occurred. Please try again later.'
+        ], 500);
+    }
     }
 
     public function chat(Request $request) {
         return $request->all();
     }
 
+    // get conversations...
     public function index() {
         $conversation = Conversation::where('user_id', auth()->user()->id)->where('template', false)->get();
         return $conversation;
     }
 
+    // get templates
     public function templates() {
         $conversation = Conversation::where('user_id', auth()->user()->id)->where('template', true)->get();
         return $conversation;

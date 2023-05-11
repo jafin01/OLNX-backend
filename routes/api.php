@@ -24,19 +24,19 @@ Route::group(['middleware' => ['auth:sanctum', 'verified', 'admin']], function()
     Route::get('/admin', [AdminController::class, 'admin']);
 });
 
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
+// Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+//     $request->fulfill();
  
-    return ['message' => 'Email verified!'];
-})->middleware(['auth:sanctum', 'signed'])->name('verification.verify');
+//     return ['message' => 'Email verified!'];
+// })->middleware(['auth:sanctum', 'signed'])->name('verification.verify');
 
-Route::post('/email/resend', function (Request $request) {
-    $request->user()->sendEmailVerificationNotification();
+// Route::post('/email/resend', function (Request $request) {
+//     $request->user()->sendEmailVerificationNotification();
  
-    return ['message' => 'Email sent!'];
-})->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
+//     return ['message' => 'Email sent!'];
+// })->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
 
-Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
+Route::group(['middleware' => ['auth:sanctum']], function () { // later replace it with Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('/user', function (Request $request) {
         $data['user'] = $request->user();
         $data['subscribed'] = $request->user()->subscribed('default');
@@ -61,16 +61,37 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::post('/conversation', [ConversationController::class, 'save']);
 
     Route::post('/conversation/update', [ConversationController::class, 'update']);
-
     Route::post('/ai/chat', [ConversationController::class, 'chat']);
 
     Route::get('/conversation', [ConversationController::class, 'index']);
-    Route::get('/templates', [ConversationController::class, 'templates']);
-
     Route::get('/conversation/{id}', [ConversationController::class, 'show']);
 
+    Route::get('/templates', [ConversationController::class, 'templates']);
+    
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
+// Route::get('/conversation', [ConversationController::class, 'index']);
+// Route::post('/conversation', [ConversationController::class, 'save']);
+//Route::get('/conversation/{id}', [ConversationController::class, 'show']);
+
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
+
+// catch-all route
+// Route::post('/{any}', function (Request $request) {
+//     $currentRoute = $request->path();
+//     error_log("Current route: " . $currentRoute);
+
+//     $user = Auth::user();
+//     error_log($user);
+//         $user->email_verified_at = now();
+//         $user->save();
+//         return 'Email verified successfully!';
+
+
+//     // return response()->json([
+//     //     'message' => 'Not Found'
+//     // ], 411);
+// })->where('any', '.*');

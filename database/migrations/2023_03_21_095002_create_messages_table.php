@@ -14,8 +14,14 @@ return new class extends Migration
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
             $table->text('message');
-            $table->integer('conversation_id')->unsigned();
-            $table->string("sender")->default("system 1");
+            // $table->integer('conversation_id')->unsigned();
+            $table->unsignedBigINteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedBigINteger('conversation_id');
+            $table->foreign('conversation_id')->references('id')->on('conversations')->onDelete('cascade');
+            // $table->string("sender")->default("system 1");
+            $table->string("sender");
+            // $table->integer("user_id")->unsigned();
             $table->timestamps();
         });
     }

@@ -12,17 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('configs', function (Blueprint $table) {
-            
-            $table->string("temperature_1")->change();
-            $table->string("temperature_2")->change();
-            $table->string("max_length_1")->change();
-            $table->string("max_length_2")->change();
-            $table->string("top_p_1")->change();
-            $table->string("top_p_2")->change();
-            $table->string("frequency_penalty_1")->change();
-            $table->string("frequency_penalty_2")->change();
-            $table->string("presence_penalty_1")->change();
-            $table->string("presence_penalty_2")->change();
+            $table->string("model")->change();
+            $table->string("system")->change();
+            $table->string("temperature")->change();
+            $table->string("max_length")->change();
+            $table->string("top_p")->change();
+            $table->string("frequency_penalty")->change();
+            $table->string("presence_penalty")->change();
         });
     }
 

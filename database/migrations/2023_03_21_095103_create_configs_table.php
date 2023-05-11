@@ -14,18 +14,14 @@ return new class extends Migration
         Schema::create('configs', function (Blueprint $table) {
             $table->id();
             $table->integer('conversation_id')->unsigned();
-            $table->string("model_1");
-            $table->string("model_2");
-            $table->integer("temperature_1");
-            $table->integer("temperature_2");
-            $table->integer("max_length_1");
-            $table->integer("max_length_2");
-            $table->integer("top_p_1");
-            $table->integer("top_p_2");
-            $table->integer("frequency_penalty_1");
-            $table->integer("frequency_penalty_2");
-            $table->integer("presence_penalty_1");
-            $table->integer("presence_penalty_2");
+            $table->integer('user_id')->unsigned();
+            $table->string("model");
+            $table->string("system");
+            $table->integer("temperature");
+            $table->integer("max_length");
+            $table->integer("top_p");
+            $table->integer("frequency_penalty");
+            $table->integer("presence_penalty");
             $table->timestamps();
         });
     }
