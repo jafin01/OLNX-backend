@@ -24,15 +24,6 @@ class AuthController extends Controller
             'password' => bcrypt($fields['password'])
         ]);
 
-        // $token = $user->createToken('olnx_token')->plainTextToken;
-
-        // $response = [
-        //     'user' => $user,
-        //     'token' => $token
-        // ];
-
-        //event(new Registered($user));
-
         return response($user, 201);
     }
 
