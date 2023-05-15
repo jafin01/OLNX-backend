@@ -17,6 +17,7 @@ class AuthController extends Controller
             'email' => 'required|string|unique:users,email',
             'password' => 'required|string|confirmed'
         ]);
+        error_log('inside auth controller');
 
         $user = User::create([
             'name' => $fields['name'],

@@ -59,6 +59,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () { // later replace 
     });
 
     Route::post('/conversation', [ConversationController::class, 'save']);
+    // error_log('inserver');
 
     Route::post('/conversation/update', [ConversationController::class, 'update']);
     Route::post('/ai/chat', [ConversationController::class, 'chat']);
@@ -67,14 +68,12 @@ Route::group(['middleware' => ['auth:sanctum']], function () { // later replace 
     Route::get('/conversation/{id}', [ConversationController::class, 'show']);
 
     Route::get('/templates', [ConversationController::class, 'templates']);
-    
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
 // Route::get('/conversation', [ConversationController::class, 'index']);
 // Route::post('/conversation', [ConversationController::class, 'save']);
 //Route::get('/conversation/{id}', [ConversationController::class, 'show']);
-
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 

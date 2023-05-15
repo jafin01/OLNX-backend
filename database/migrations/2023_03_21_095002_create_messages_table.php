@@ -20,7 +20,7 @@ return new class extends Migration
             $table->unsignedBigINteger('conversation_id');
             $table->foreign('conversation_id')->references('id')->on('conversations')->onDelete('cascade');
             // $table->string("sender")->default("system 1");
-            $table->string("sender");
+            $table->string("role");
             // $table->integer("user_id")->unsigned();
             $table->timestamps();
         });

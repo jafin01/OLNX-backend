@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string("model")->change();
             $table->string("system")->change();
             $table->string("temperature")->change();
-            $table->string("max_length")->change();
+            $table->string("maxLength")->change();
             $table->string("top_p")->change();
             $table->string("frequency_penalty")->change();
             $table->string("presence_penalty")->change();
