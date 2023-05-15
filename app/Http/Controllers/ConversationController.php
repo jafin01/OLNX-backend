@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 class ConversationController extends Controller
 {
     public function save(Request $request) {
-        error_log('now call 2 times');
         $conversation = new Conversation();
         // get name from OpenAI for this conversation here
         if ($request->name) {
@@ -20,7 +19,8 @@ class ConversationController extends Controller
             // return 'no name';
             // put the generated name here
         }
-
+        
+        error_log('hi');
     $conversation->user_id = auth()->user()->id;
         if ($request->template) {
             $conversation->template = true;
@@ -35,14 +35,14 @@ class ConversationController extends Controller
                 "error"=> "Helloo"
             ];
         }
-/////////////////////////// 10 may 2023
+
         try {
             foreach ($request->messages as $message) {
                 $msg = new Message();
                 $msg->user_id = auth()->user()->id;
                 $msg->conversation_id = $conversation->id;
                 $msg->message = $message['message'];
-                $msg->sender = $message['role'];
+                $msg->role = $message['role'];
 
                 $msg->save();
             }
@@ -52,26 +52,19 @@ class ConversationController extends Controller
                 "error" => "An error occurred while saving the message."
             ];
         }
-
-        
-        //configs
         
         try{
             $configs = $request->configs;
-            // error_log($configs[0]);
-            
-            // return [
-            //     "configs" => $configs[0]["system"]
-            // ];
             foreach ($configs as $index => $config) {
                 $configuration = new Config();
                 $configuration->conversation_id = $conversation->id;
                 $configuration->user_id = auth()->user()->id;
+                $configuration->name = $config["name"];
                 $configuration->system = $config["system"];
                 $configuration->model = $config['model'];
                 $configuration->top_p = $config['top_p'];
                 $configuration->temperature = $config['temperature'];
-                $configuration->max_length = $config['maxLength'];
+                $configuration->maxLength = $config['maxLength'];
                 $configuration->frequency_penalty = $config['frequency_penalty'];
                 $configuration->presence_penalty = $config['presence_penalty'];
 
@@ -86,19 +79,17 @@ class ConversationController extends Controller
                 "error" => "An error occurred while saving the message."
             ];
         }
-    
 
         return $conversation;
     }
 
+    // UPDATE CONVERSATION
     public function update(Request $request) {
 
        try { 
         $conversation = Conversation::find($request->id);
 
         $conversationId = $request->id;
-        error_log('Conversation ID: ' . $conversationId);
-
 
         if (!$conversation) {
             // Conversation not found
@@ -117,11 +108,7 @@ class ConversationController extends Controller
             error_log("generated a new name");
         }
 
-        
         // Update conversation name
-        
-        
-
         $conversation->user_id = auth()->user()->id;
 
         if ($request->template) {
@@ -210,10 +197,13 @@ class ConversationController extends Controller
     }
 
     public function show($id) {
+        error_log('Conversation ID: ' . $id);
         $data['conversation'] = Conversation::where('id', $id)->first();
         if ($data['conversation']->template || $data['conversation']->user_id == auth()->user()->id) {
             $data['messages'] = Message::where('conversation_id', $id)->get();
-            $data['config'] = Config::where('conversation_id', $id)->first();
+            $data['configs'] = Config::where('conversation_id', $id)->get();
+
+            error_log($data['configs']);
             return $data;
         } else {
             return response([
@@ -222,3 +212,5 @@ class ConversationController extends Controller
         }
     }
 }
+
+

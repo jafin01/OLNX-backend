@@ -15,10 +15,11 @@ return new class extends Migration
             $table->id();
             $table->integer('conversation_id')->unsigned();
             $table->integer('user_id')->unsigned();
+            $table->string('name');
             $table->string("model");
             $table->string("system");
             $table->integer("temperature");
-            $table->integer("max_length");
+            $table->integer("maxLength");
             $table->integer("top_p");
             $table->integer("frequency_penalty");
             $table->integer("presence_penalty");

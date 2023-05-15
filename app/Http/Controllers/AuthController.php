@@ -17,21 +17,13 @@ class AuthController extends Controller
             'email' => 'required|string|unique:users,email',
             'password' => 'required|string|confirmed'
         ]);
+        error_log('inside auth controller');
 
         $user = User::create([
             'name' => $fields['name'],
             'email' => $fields['email'],
             'password' => bcrypt($fields['password'])
         ]);
-
-        // $token = $user->createToken('olnx_token')->plainTextToken;
-
-        // $response = [
-        //     'user' => $user,
-        //     'token' => $token
-        // ];
-
-        //event(new Registered($user));
 
         return response($user, 201);
     }
