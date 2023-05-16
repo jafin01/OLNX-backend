@@ -19,8 +19,6 @@ class ConversationController extends Controller
             // return 'no name';
             // put the generated name here
         }
-        
-        error_log('hi');
     $conversation->user_id = auth()->user()->id;
         if ($request->template) {
             $conversation->template = true;
@@ -28,14 +26,12 @@ class ConversationController extends Controller
             $conversation->template = false;
         }
         try {
-            // return $conversation;
             $conversation->save();   
         } catch(\Exception $e) {
             return [
                 "error"=> "Helloo"
             ];
         }
-
         try {
             foreach ($request->messages as $message) {
                 $msg = new Message();
@@ -66,10 +62,7 @@ class ConversationController extends Controller
                 $configuration->maxLength = $config['maxLength'];
                 $configuration->frequency_penalty = $config['frequency_penalty'];
                 $configuration->presence_penalty = $config['presence_penalty'];
-                
                 $configuration->save();
-                // return ["request->configs" => $request->configs];
-            
                 // $this->saveMessages($request->messages[$index], $conversation, $configuration);
             }
 
@@ -93,13 +86,11 @@ class ConversationController extends Controller
 
         if (!$conversation) {
             // Conversation not found
-            //$conversationId = 59;
             return response()->json([
                 'error' => 'Conversation not found.'
             ], 410);
         }
 
-        // return $request;
         if ($request->name) {
             $conversation->name = $request->name;
         } else {
@@ -128,8 +119,7 @@ class ConversationController extends Controller
         try {
             // Delete existing messages
             Message::where('conversation_id', $conversation->id)->delete();
-
-            // return $request->messages;
+            
             // Save updated messages
             foreach ($request->messages as $message) {
                 $msg = new Message();
