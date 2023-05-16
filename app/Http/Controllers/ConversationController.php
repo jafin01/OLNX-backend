@@ -54,8 +54,7 @@ class ConversationController extends Controller
         }
         
         try{
-            $configs = $request->configs;
-            foreach ($configs as $index => $config) {
+            foreach ($request->configs as $config) {
                 $configuration = new Config();
                 $configuration->conversation_id = $conversation->id;
                 $configuration->user_id = auth()->user()->id;
