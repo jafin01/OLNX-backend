@@ -54,8 +54,7 @@ class ConversationController extends Controller
         }
         
         try{
-            $configs = $request->configs;
-            foreach ($configs as $index => $config) {
+            foreach ($request->configs as $config) {
                 $configuration = new Config();
                 $configuration->conversation_id = $conversation->id;
                 $configuration->user_id = auth()->user()->id;
@@ -67,8 +66,9 @@ class ConversationController extends Controller
                 $configuration->maxLength = $config['maxLength'];
                 $configuration->frequency_penalty = $config['frequency_penalty'];
                 $configuration->presence_penalty = $config['presence_penalty'];
-
+                
                 $configuration->save();
+                // return ["request->configs" => $request->configs];
             
                 // $this->saveMessages($request->messages[$index], $conversation, $configuration);
             }
@@ -99,7 +99,7 @@ class ConversationController extends Controller
             ], 410);
         }
 
-        return $request;
+        // return $request;
         if ($request->name) {
             $conversation->name = $request->name;
         } else {
@@ -129,13 +129,14 @@ class ConversationController extends Controller
             // Delete existing messages
             Message::where('conversation_id', $conversation->id)->delete();
 
+            // return $request->messages;
             // Save updated messages
             foreach ($request->messages as $message) {
                 $msg = new Message();
                 $msg->user_id = auth()->user()->id;
                 $msg->conversation_id = $conversation->id;
                 $msg->message = $message['message'];
-                $msg->sender = $message['role'];
+                $msg->role = $message['role'];
                 $msg->save();
             }
         } catch(\Exception $e) {
@@ -149,35 +150,38 @@ class ConversationController extends Controller
             Config::where('conversation_id', $conversation->id)->delete();
 
             // Save updated configurations
+
             foreach ($request->configs as $config) {
                 $configuration = new Config();
                 $configuration->conversation_id = $conversation->id;
                 $configuration->user_id = auth()->user()->id;
+                $configuration->name= $config["name"];
                 $configuration->system = $config["system"];
                 $configuration->model = $config['model'];
                 $configuration->top_p = $config['top_p'];
                 $configuration->temperature = $config['temperature'];
-                $configuration->max_length = $config['maxLength'];
+                $configuration->maxLength = $config['maxLength'];
                 $configuration->frequency_penalty = $config['frequency_penalty'];
                 $configuration->presence_penalty = $config['presence_penalty'];
                 $configuration->save();
             }
         } catch(\Exception $e) {
+            error_log($e->getMessage());
             return [
                 "error" => "An error occurred while saving the configurations."
             ];
         }
 
         return $conversation;
-    } catch (\Exception $e) {
-        // Log the error for debugging
-        error_log($e->getMessage());
-        
-        // Return an error response
-        return response()->json([
-            'error' => 'An internal server error occurred. Please try again later.'
-        ], 500);
-    }
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            error_log($e->getMessage());
+            
+            // Return an error response
+            return response()->json([
+                'error' => 'An internal server error occurred. Please try again later.'
+            ], 500);
+        }
     }
 
     public function chat(Request $request) {

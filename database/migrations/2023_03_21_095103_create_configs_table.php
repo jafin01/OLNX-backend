@@ -18,11 +18,11 @@ return new class extends Migration
             $table->string('name');
             $table->string("model");
             $table->string("system");
-            $table->integer("temperature");
+            $table->decimal("temperature", 8, 2);
             $table->integer("maxLength");
-            $table->integer("top_p");
-            $table->integer("frequency_penalty");
-            $table->integer("presence_penalty");
+            $table->decimal("top_p", 8, 2);
+            $table->decimal("frequency_penalty", 8, 2);
+            $table->decimal("presence_penalty", 8, 2);
             $table->timestamps();
         });
     }
