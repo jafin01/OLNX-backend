@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::table('configs', function (Blueprint $table) {
             $table->string("model")->change();
             $table->string("system")->change();
-            $table->string("temperature")->change();
-            $table->string("maxLength")->change();
-            $table->string("top_p")->change();
-            $table->string("frequency_penalty")->change();
-            $table->string("presence_penalty")->change();
+            $table->decimal("temperature", 8, 2)->change();
+            $table->decimal("maxLength", 8, 2)->change();
+            $table->decimal("top_p", 8, 2)->change();
+            $table->decimal("frequency_penalty", 8, 2)->change();
+            $table->decimal("presence_penalty", 8, 2)->change();
         });
     }
 
